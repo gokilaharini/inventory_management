@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Sales Order</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+<div class="box">
+    <h1>Sales Order Details</h1>
+
+    <div class="search-section">
+        <label for="orderId">Enter Order ID</label>
+        <input type="number" id="orderId" name="order_id">
+
+        <br><br>
+        <button onclick="getOrderDetails()">Search</button>
+        <button onclick="deleteOrder()">Delete</button>
+        <a href="http://localhost:8080/packages"><button>All Packages</button></a>.
+    </div>
+</div>
+    <br><br>
+<div class="box">
+    <div id="orderDetails" class="order-details">
+        <p><label>Sales Order ID:</label><span id="displayOrderId"></span></p>
+        <p><label>Customer Name:</label> <span id="customerName"></span></p>
+        <p><label>Order Date:</label> <span id="orderDate"></span></p>
+        <p><label>Expected Shipment Date:</label> <span id="shipDate"></span></p>
+        <p><label>Address:</label> <span id="address"></span></p>
+        <p><label>Sales Person:</label> <span id="sales"></span></p>
+        <p><label>Total Amount:</label> <span id="totAmount"></span></p>
+        <p><label>Payment Status:</label> <span id="payStatus"></span></p>
+        <p><label>Status:</label> <span id="status"></span></p>
+    </div>
+
+    <h2>Order Items</h2>
+<fieldset>
+    <legend>Item Details</legend>
+    <table>
+        <thead>
+        <tr>
+            <th>Item ID</th>
+            <th>Quantity</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+
+        <tbody id="itemsTable">
+        </tbody>
+    </table>
+</fieldset>
+
+    <br><br>
+    <a href="./salesorder.html"><button>Create New Sales Order</button></a>.
+
+</div>
+</div>
+
+
+<script>
+    async function getOrderDetails() {
+        const orderId = parseInt(document.getElementById("orderId").value);
+        if (!orderId) {
+            alert("Enter Order ID")
+            return;
+        }
+        try {
+            const response = await fetch(
+                `http://localhost:8080/salesorders/${orderId}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Order not found");
+            }
+
+            const order=await response.json();
+
+            document.getElementById("displayOrderId").textContent = order.salesOrder_id;
+            document.getElementById("customerName").textContent =order.customer_name;
+            document.getElementById("orderDate").textContent =order.order_date;
+            document.getElementById("shipDate").textContent =order.shipment_date;
+            document.getElementById("address").textContent =order.address;
+            document.getElementById("sales").textContent =order.sales_person;
+            document.getElementById("totAmount").textContent =order.total_amount;
+            document.getElementById("payStatus").textContent =order.payment_status;
+            document.getElementById("status").textContent =order.status;
+
+            const tableBody = document.getElementById("itemsTable");
+
+            order.items.forEach(item => {
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                <td>${item.item_id}</td>
+                <td>${item.quantity}</td>
+                <td>₹${item.amount}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+        }
+        catch (error) {
+            console.error("Error:", error);
+            alert("Unable to retrieve order details: " + error.message);
+        }
+    }
+
+    async function deleteOrder() {
+        const orderId = parseInt(document.getElementById("orderId").value);
+        if (!orderId) {
+            alert("Enter Order ID")
+            return;
+        }
+        try {
+            const response = await fetch(
+                `http://localhost:8080/salesorders/${orderId}`,{
+                    method:"DELETE"
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Order not found");
+            }
+            else{
+                alert("successfully deleted");
+            }
+
+        }
+        catch (error) {
+            console.error("Error:", error);
+            alert("Unable to delete order: " + error.message);
+        }
+    }
+
+</script>
+
+</body>
+</html>

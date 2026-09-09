@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <title>Items</title>
+</head>
+<body>
+<form onsubmit="createItem(event)" method="post">
+    <div class="box" >
+    <h2>Create an Item</h2>
+
+    <p>
+        <label for="name">Item Name :</label>
+        <input type="text" name="name" id="name" required />
+    </p>
+
+    <p>
+        <label for="weight">Weight :</label>
+        <input type="number" name="weight" id="weight" required />
+    </p>
+    <p>
+        <label for="stock_on_hand">Stock on Hand :</label>
+        <input type="number" name="stockOnHand" id="stock_on_hand" required />
+    </p>
+    <p>
+        <label for="committed_stock">Committed Stock :</label>
+        <input type="number" value=0 name="committedStock" id="committed_stock" required />
+    </p>
+    <p>
+        <label for="cost_price">Cost Price :</label>
+        <input type="number" name="costPrice" id="cost_price" required />
+    </p>
+    <p>
+        <label for="selling_price">Selling Price :</label>
+        <input type="number" name="sellingPrice" id="selling_price" required />
+    </p>
+    <p>
+        <button type="submit">Submit</button>
+    </p>
+    </div>
+</form>
+
+<script>
+    async function createItem(event){
+        event.preventDefault();
+        let formData = {};
+        for (let i = 0; i < event.elements.length; i++) {
+            let element = event.elements[i];
+            if (element.type !== "submit") {
+                formData[element.name] = element.value;
+            }
+        }
+        let jsonData = JSON.stringify(formData);
+
+        try {
+            const response = await fetch('http://localhost:8080/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: jsonData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert('Item created successfully!');
+            } else {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
+
+        } catch (error) {
+            console.error('Error sending data:', error);
+            alert('Failed to send data to the server.');
+        }
+    }
+</script>
+</body>
+</html>

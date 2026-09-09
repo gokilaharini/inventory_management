@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <title>Sales Orders</title>
+</head>
+<body>
+
+
+<form id="orderForm">
+    <div class="box" >
+        <h2>Create a Sales Order</h2>
+
+        <p>
+            <label for="cus_name">Customer Name :</label>
+            <input type="text" name="name" id="cus_name" required/>
+        </p>
+
+        <p>
+            <label for="order_date">Order Date :</label>
+            <input type="date" name="orderDate" id="order_date" required/>
+        </p>
+
+        <p>
+            <label for="shipment_date">Expected Shipment Date :</label>
+            <input type="date" name="ShipDate" id="shipment_date" />
+        </p>
+
+        <p>
+            <label for="address">Address :</label>
+            <input type="text" name="address" id="address" required/>
+        </p>
+
+        <p>
+            <label for="sales_person">Sales Person Name :</label>
+            <input type="text" name="salesPerson" id="sales_person" required/>
+        </p>
+
+        <p>
+            <label for="total_amount">Total Amount :</label>
+            <input type="number" name="totalAmount" id="total_amount" required/>
+        </p>
+
+        <p>
+            <label for="payment_status">Payment Status :</label>
+            <input type="text" name="payment" id="payment_status" value="Yet to" required/>
+        </p>
+
+        <p>
+            <label for="status">Status of the Order :</label>
+            <input type="text" name="status" id="status" value="confirmed" required/>
+        </p>
+
+        <p>
+            <label for="order_type">Order Type :</label>
+            <input type="text" name="order_type" id="order_type" value="goods" required/>
+        </p>
+
+        <h3>Items</h3>
+        <div id="itemsContainer">
+
+            <div class="item-row">
+                <fieldset >
+                    <legend>Item Details</legend>
+                <label>Item ID : <input type="number" class="item-id" value="2" required></label>
+                <label>Quantity : <input type="number" class="item-qty" value="20" required></label>
+                <label>Amount : <input type="number" class="item-amount" value="0" required></label>
+                <button type="button" onclick="this.parentElement.remove()">Remove</button>
+
+                </fieldset>
+            </div>
+        </div>
+
+        <br><br>
+
+        <button type="button" id="addItemBtn">Add Another Item</button>
+
+        <br><br>
+        <button type="submit">Submit Order</button>
+    </div>
+</form>
+
+
+<script>
+    document.getElementById('addItemBtn').addEventListener('click', () => {
+        const container = document.getElementById('itemsContainer');
+        const newRow = document.createElement('div');
+        newRow.className = 'item-row';
+        newRow.innerHTML = `
+                <br><br>
+                <fieldset>
+                <legend>Item Details</legend>
+                <label>Item ID: <input type="number" class="item-id" required></label>
+                <label>Quantity: <input type="number" class="item-qty" required></label>
+                <label>Amount: <input type="number" class="item-amount" required></label>
+                <button type="button" onclick="this.parentElement.remove()">Remove</button>
+                </fieldset>
+            `;
+        container.appendChild(newRow);
+    });
+
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const itemrows = document.querySelectorAll('.item-row');
+        const itemsArray = [];
+
+        itemrows.forEach((row) => {
+            itemsArray.push({
+                item_id: parseInt(row.querySelector('.item-id').value),
+                quantity: parseInt(row.querySelector('.item-qty').value),
+                amount: parseFloat(row.querySelector('.item-amount').value)
+            });
+        });
+
+        const payload = {
+            customer_name: document.getElementById('cus_name').value,
+            order_date: document.getElementById('order_date').value,
+            shipment_date: document.getElementById('shipment_date').value,
+            address: document.getElementById('address').value,
+            sales_person: document.getElementById('sales_person').value,
+            total_amount: parseInt(document.getElementById('total_amount').value),
+            payment_status: document.getElementById('payment_status').value,
+            status: document.getElementById('status').value,
+            items: itemsArray
+        };
+
+        console.log("Sending payload:", payload);
+
+        try {
+            const response = await fetch('http://localhost:8080/salesorders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert('Order submitted successfully!');
+            } else {
+                alert('Failed to submit order.');
+
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while sending data.');
+        }
+    });
+</script>
+</body>
+</html>

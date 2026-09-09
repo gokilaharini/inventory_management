@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Items</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+<div class="container">
+    <div class="box">
+
+        <h1>Item Details</h1>
+        <div class="search-section">
+            <label for="itemId">Enter Item ID</label>
+            <input type="number" id="itemId" name="item_id">
+
+            <br><br>
+            <button onclick="getItemDetails()">Search Item</button>
+            <button onclick="deleteItem()">Delete</button>
+            <a href="http://localhost:8080/items"><button>All Items</button></a>.
+        </div>
+    </div>
+    <br><br>
+    <div class="box">
+        <div id="itemDetails" class="item-details">
+            <p><label>Item ID:</label><span id="displayItemId"></span></p>
+            <p><label>Item Name:</label><span id="name"></span></p>
+            <p><label>Weight:</label><span id="weight"></span></p>
+            <p><label>Stock on Hand:</label><span id="stockOnHand"></span></p>
+            <p><label>Committed Stock:</label><span id="committedStock"></span></p>
+            <p><label>Available Stock:</label><span id="availableStock"></span></p>
+            <p><label>Cost Price:</label><span id="costPrice"></span></p>
+            <p><label>Selling Price:</label><span id="sellingPrice"></span></p>
+        </div>
+
+
+        <a href="./items.html"><button>Create New Item</button></a>.
+
+
+    </div>
+</div>
+
+
+<script>
+    async function getItemDetails() {
+        const itemId = parseInt(document.getElementById("itemId").value);
+        if (!itemId) {
+            alert("Enter Item ID")
+            return;
+        }
+        try {
+            const response = await fetch(
+                `http://localhost:8080/items/${itemId}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Item not found");
+            }
+
+            const order=await response.json();
+
+            document.getElementById("displayItemId").textContent =order.itemId;
+            document.getElementById("name").textContent =order.name;
+            document.getElementById("weight").textContent =order.weight;
+            document.getElementById("stockOnHand").textContent =order.stockOnHand;
+            document.getElementById("committedStock").textContent =order.committedStock;
+            document.getElementById("availableStock").textContent =order.availableStock;
+            document.getElementById("costPrice").textContent =order.costPrice;
+            document.getElementById("sellingPrice").textContent =order.sellingPrice;
+
+        }
+        catch (error) {
+            console.error("Error:", error);
+            alert("Unable to retrieve Item details: " + error.message);
+        }
+    }
+
+    async function deleteItem() {
+        const itemId = parseInt(document.getElementById("itemId").value);
+        if (!itemId) {
+            alert("Enter Item ID")
+            return;
+        }
+        try {
+            const response = await fetch(
+                `http://localhost:8080/items/${itemId}`,{
+                    method:"DELETE"
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Item not found");
+            }
+            else{
+                alert("successfully deleted");
+            }
+        }
+        catch (error) {
+            console.error("Error:", error);
+            alert("Unable to delete Item: " + error.message);
+        }
+    }
+
+</script>
+
+</body>
+</html>

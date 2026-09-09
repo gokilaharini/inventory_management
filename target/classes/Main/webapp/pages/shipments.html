@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <title>Shipment packages</title>
+</head>
+<body>
+
+
+<form id="shipment">
+    <div class="box" >
+        <h2>Create a Shipment</h2>
+
+        <p>
+            <label for="net_quantity">Net Quantity :</label>
+            <input type="number" name="net_quantity" id="net_quantity" />
+        </p>
+
+        <p>
+            <label for="ship_date">Shipment Date :</label>
+            <input type="date" name="shipment_date" id="ship_date" required/>
+        </p>
+
+        <p>
+            <label for="status">Status :</label>
+            <input type="text" name="status" id="status" value="shipped" required/>
+        </p>
+
+        <p>
+            <label for="container_id">Container ID :</label>
+            <input type="number" name="container_id" id="container_id" required/>
+        </p>
+
+        <h3>Packages</h3>
+        <div id="packContainer">
+
+            <div class="pack-row">
+                <fieldset>
+                    <legend>Package Details</legend>
+                    <label>Package ID : <input type="number" class="pack-id"  required></label>
+                    <label>Package Quantity : <input type="number" class="pack-qty"  required></label>
+                    <label>Amount : <input type="number" class="pack-amount"  required></label>
+                    <button type="button" onclick="this.parentElement.remove()">Remove</button>
+                </fieldset>
+            </div>
+        </div>
+
+        <br><br>
+
+        <button type="button" id="addPackBtn">Add Another Package</button>
+
+        <br><br>
+        <button type="submit">Create Shipment</button>
+    </div>
+</form>
+
+<script>
+    document.getElementById('addPackBtn').addEventListener('click', () => {
+        const container = document.getElementById('packContainer');
+        const newRow = document.createElement('div');
+        newRow.className = 'pack-row';
+        newRow.innerHTML = `
+                <br><br>
+                <fieldset>
+                <legend>Package Details</legend>
+                <label>Package ID: <input type="number" class="pack-id" required></label>
+                <label>Package Quantity: <input type="number" class="pack-qty" required></label>
+                <label>Amount: <input type="number" class="pack-amount" required></label>
+                <button type="button" onclick="this.parentElement.remove()">Remove</button>
+                </fieldset>
+            `;
+        container.appendChild(newRow);
+    });
+
+    document.getElementById('shipment').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const itemrows = document.querySelectorAll('.pack-row');
+        const itemsArray = [];
+
+        itemrows.forEach((row) => {
+            itemsArray.push({
+                package_id: parseInt(row.querySelector('.pack-id').value),
+                package_quantity: parseInt(row.querySelector('.pack-qty').value),
+                amount: parseFloat(row.querySelector('.pack-amount').value)
+            });
+        });
+
+        const payload = {
+            net_quantity: parseInt(document.getElementById('net_quantity').value),
+            shipment_date: document.getElementById('ship_date').value,
+            status: document.getElementById('status').value,
+            container_id: parseInt(document.getElementById('container_id').value),
+            items: itemsArray
+        };
+
+        console.log("Sending payload:", payload);
+
+        try {
+            const response = await fetch('http://localhost:8080/shipments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert('Order submitted successfully!');
+            } else {
+                alert('Failed to submit order.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while sending data.');
+        }
+    });
+</script>
+</body>
+</html>

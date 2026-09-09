@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Shipments</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+<div class="container">
+    <div class="box">
+
+        <h1>Shipment Details</h1>
+        <div class="search-section">
+            <label for="shipId">Enter Shipment ID</label>
+            <input type="number" id="shipId" name="shipment_id">
+
+            <br><br>
+            <button onclick="getShipDetails()">Search Shipment</button>
+            <button onclick="deleteShip()">Delete</button>
+            <a href="http://localhost:8080/shipments"><button>All Shipments</button></a>.
+        </div>
+    </div>
+    <br><br>
+    <div class="box">
+        <div id="shipDetails" class="ship-details">
+            <p><label>Shipment ID:</label><span id="displayShipId"></span></p>
+            <p><label>Net Quantity:</label> <span id="net_quantity"></span></p>
+            <p><label>Shipment Date:</label> <span id="shipDate"></span></p>
+            <p><label>Status:</label> <span id="status"></span></p>
+            <p><label>Container ID:</label> <span id="container_id"></span  ></p>
+        </div>
+
+        <h2>Package Items</h2>
+        <fieldset>
+            <legend>Item Details</legend>
+            <table>
+                <thead>
+                <tr>
+                    <th>Package ID</th>
+                    <th>Package Quantity</th>
+                    <th>Amount</th>
+                </tr>
+                </thead>
+
+                <tbody id="itemsTable">
+                </tbody>
+            </table>
+        </fieldset>
+
+        <br><br>
+
+        <a href="./shipments.html"><button>Create New Shipment</button></a>.
+
+
+    </div>
+</div>
+
+
+<script>
+    async function getShipDetails() {
+        const shipId = parseInt(document.getElementById("shipId").value);
+        if (!shipId) {
+            alert("Enter Shipment ID")
+            return;
+        }
+        try {
+            const response = await fetch(
+                `http://localhost:8080/shipments/${shipId}`
+            );
+
+            if (!response.ok) {
+                throw new Error("shipment not found");
+            }
+
+            const order=await response.json();
+
+            document.getElementById("displayShipId").textContent =order.shipment_id;
+            document.getElementById("net_quantity").textContent =order.net_quantity;
+            document.getElementById("shipDate").textContent =order.shipment_date;
+            document.getElementById("status").textContent =order.status;
+            document.getElementById("container_id").textContent =order.container_id;
+
+            const tableBody = document.getElementById("itemsTable");
+            
+            order.items.forEach(item => {
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                <td>${item.package_id}</td>
+                <td>${item.package_quantity}</td>
+                <td>₹${item.amount}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+        }
+        catch (error) {
+            console.error("Error:", error);
+            alert("Unable to retrieve Shipment details: " + error.message);
+        }
+    }
+
+    async function deleteShip() {
+        const shipId = parseInt(document.getElementById("shipId").value);
+        if (!shipId) {
+            alert("Enter Shipment ID")
+            return;
+        }
+        try {
+            const response = await fetch(
+                `http://localhost:8080/shipments/${shipId}`,{
+                    method:"DELETE"
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Shipment not found");
+            }
+            else{
+                alert("successfully deleted");
+            }
+        }
+        catch (error) {
+            console.error("Error:", error);
+            alert("Unable to delete Shipment: " + error.message);
+        }
+    }
+
+</script>
+
+</body>
+</html>

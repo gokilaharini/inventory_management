@@ -1,0 +1,17 @@
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/config/databaseConfig.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/dao/ItemDAO.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/dao/customerDAO.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/dao/packageDAO.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/dao/salesOrderDAO.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/exception/databaseException.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/model/Customer.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/model/Item.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/model/Pack.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/model/Sales.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/service/ItemService.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/service/customerService.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/service/orderService.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/service/packageService.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/servlet/ItemServlet.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/servlet/customerServlet.java
+/Users/gokila-pt8275/dev/projects/inventory/src/main/java/com/inventory/servlet/orderServlet.java

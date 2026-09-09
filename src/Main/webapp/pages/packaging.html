@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <title>Packaging Orders</title>
+</head>
+<body>
+
+<form id="package">
+    <div class="box" >
+        <h2>Create a Package</h2>
+        <p>
+            <label for="order_id">Sales Order ID :</label>
+            <input type="number" name="order_id" id="order_id" required/>
+        </p>
+
+        <p>
+            <label for="order_date">Order Date :</label>
+            <input type="date" name="order_date" id="order_date" required/>
+        </p>
+
+        <p>
+            <label for="net_quantity">Net Quantity :</label>
+            <input type="number" name="quantity" id="net_quantity" />
+        </p>
+
+        <p>
+            <label for="pack_date">Package Date :</label>
+            <input type="date" name="package_date" id="pack_date" required/>
+        </p>
+
+        <p>
+            <label for="status">Status :</label>
+            <input type="text" name="status" id="status" value="packed" required/>
+        </p>
+
+        <p>
+            <label for="d_height">Dimensions - Height :</label>
+            <input type="number" name="d_height" id="d_height" required/>
+        </p>
+
+        <p>
+            <label for="d_width">Dimensions - Width :</label>
+            <input type="number" name="d_width" id="d_width" required/>
+        </p>
+
+        <p>
+            <label for="d_length">Dimensions - Length :</label>
+            <input type="number" name="d_length" id="d_length" required/>
+        </p>
+
+        <p>
+            <label for="weight">Weight :</label>
+            <input type="number" name="weight" id="weight" required/>
+        </p>
+
+        <h3>Items</h3>
+        <div id="itemsContainer">
+
+            <div class="item-row">
+                <fieldset >
+                    <legend>Item Details</legend>
+                    <label>Item ID : <input type="number" class="item-id" value="2" required></label>
+                    <label>Quantity : <input type="number" class="item-qty" value="20" required></label>
+                    <label>Amount : <input type="number" class="item-amount" value="0" required></label>
+                    <button type="button" onclick="this.parentElement.remove()">Remove</button>
+
+                </fieldset>
+            </div>
+        </div>
+
+        <br><br>
+
+        <button type="button" id="addItemBtn">Add Another Item</button>
+
+        <br><br>
+        <button type="submit">Create Package</button>
+    </div>
+</form>
+
+<script>
+    document.getElementById('addItemBtn').addEventListener('click', () => {
+        const container = document.getElementById('itemsContainer');
+        const newRow = document.createElement('div');
+        newRow.className = 'item-row';
+        newRow.innerHTML = `
+                <br><br>
+                <fieldset>
+                <legend>Item Details</legend>
+                <label>Item ID: <input type="number" class="item-id" required></label>
+                <label>Quantity: <input type="number" class="item-qty" required></label>
+                <label>Amount: <input type="number" class="item-amount" required></label>
+                <button type="button" onclick="this.parentElement.remove()">Remove</button>
+                </fieldset>
+            `;
+        container.appendChild(newRow);
+    });
+
+    document.getElementById('package').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const itemrows = document.querySelectorAll('.item-row');
+        const itemsArray = [];
+
+        itemrows.forEach((row) => {
+            itemsArray.push({
+                item_id: parseInt(row.querySelector('.item-id').value),
+                item_quantity: parseInt(row.querySelector('.item-qty').value),
+                amount: parseFloat(row.querySelector('.item-amount').value)
+            });
+        });
+
+        const payload = {
+            order_id: document.getElementById('order_id').value,
+            order_date: document.getElementById('order_date').value,
+            quantity: parseInt(document.getElementById('net_quantity').value),
+            package_date: document.getElementById('pack_date').value,
+            status: document.getElementById('status').value,
+            items: itemsArray
+        };
+
+        console.log("Sending payload:", payload);
+
+        try {
+            const response = await fetch('http://localhost:8080/packages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert('Items Packaged successfully!');
+            } else {
+                alert('Failed to submit order.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while sending data.');
+        }
+    });
+</script>
+</body>
+</html>
