@@ -25,6 +25,9 @@ public class ItemServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:63342");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         String path = request.getPathInfo();
         try {
             if (path == null || path.equals("/")) {
@@ -37,7 +40,6 @@ public class ItemServlet extends HttpServlet {
                 return;
             }
 
-            // GET /items/{id}
             int itemId = parseId(path);
             Item item = itemService.getItem(itemId);
             if (item == null) {
